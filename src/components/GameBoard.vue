@@ -22,7 +22,8 @@ export default {
   data() {
     return {
       cells: this.shuffleCells(),
-      moves: 0 // added
+      moves: 0,
+      gameOver: false
     };
   },
   methods: {
@@ -40,19 +41,22 @@ export default {
     },
 
     moveCell(cellIndex) {
+      if (this.gameOver) {
+        return;
+      }
       const emptyIndex = this.cells.indexOf(0);
 
-      // Check if the cell to be moved is next to the empty cell
       const rowDiff = Math.abs(Math.floor(cellIndex / 4) - Math.floor(emptyIndex / 4));
       const colDiff = Math.abs(cellIndex % 4 - emptyIndex % 4);
 
       if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
         this.cells[emptyIndex] = this.cells[cellIndex];
         this.cells[cellIndex] = 0;
-        this.moves++; // added
+        this.moves++;
       }
 
       if (this.isSolved()) {
+        this.gameOver = true
         alert("Congratulations! You solved the puzzle!");
       }
     },
