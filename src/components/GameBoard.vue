@@ -1,18 +1,21 @@
 <template>
   <div class="game-board">
-    <div
+    <Cell
         v-for="(cell, index) in cells"
         :key="index"
-        class="cell"
-    >
-      {{ cell === 0 ? '' : cell }}
-    </div>
+        :value="cell"
+        :index="index"
+        @move="moveCell"
+    />
   </div>
 </template>
 
 <script>
+import Cell from "@/components/Cell.vue";
+
 export default {
   name: 'GameBoard',
+  components: {Cell},
   data() {
     return {
       cells: this.shuffleCells()
@@ -45,6 +48,30 @@ export default {
             invCount++;
 
       return invCount % 2 === 0;
+    },
+    moveCell(cellIndex) {
+      const emptyIndex = this.cells.indexOf(0);
+
+      // Check if the cell to be moved is next to the empty cell
+      const rowDiff = Math.abs(Math.floor(cellIndex / 4) - Math.floor(emptyIndex / 4));
+      const colDiff = Math.abs(cellIndex % 4 - emptyIndex % 4);
+
+      if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
+        this.cells[emptyIndex] = this.cells[cellIndex];
+        this.cells[cellIndex] = 0;
+      }
+
+      if (this.isSolved()) {
+        alert("Congratulations! You solved the puzzle!");
+      }
+    },
+    isSolved() {
+      for (let i = 0; i < 15; i++) {
+        if (this.cells[i] !== i + 1) {
+          return false;
+        }
+      }
+      return this.cells[15] === 0;
     }
   }
 }
