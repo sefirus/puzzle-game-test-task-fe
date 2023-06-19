@@ -1,12 +1,15 @@
 <template>
-  <div class="game-board">
-    <Cell
-        v-for="(cell, index) in cells"
-        :key="index"
-        :value="cell"
-        :index="index"
-        @move="moveCell"
-    />
+  <div>
+    <p>Moves: {{ moves }}</p>
+    <div class="game-board">
+      <Cell
+          v-for="(cell, index) in cells"
+          :key="index"
+          :value="cell"
+          :index="index"
+          @move="moveCell"
+      />
+    </div>
   </div>
 </template>
 
@@ -18,7 +21,8 @@ export default {
   components: {Cell},
   data() {
     return {
-      cells: this.shuffleCells()
+      cells: this.shuffleCells(),
+      moves: 0 // added
     };
   },
   methods: {
@@ -32,23 +36,9 @@ export default {
         [cells[i], cells[j]] = [cells[j], cells[i]];
       }
 
-      // Check for solvability and correct if necessary
-      if (!this.isSolvable(cells)) {
-        [cells[14], cells[13]] = [cells[13], cells[14]]; // Swap 2 cells
-      }
-
       return cells;
     },
 
-    isSolvable(cells) {
-      let invCount = 0;
-      for (let i = 0; i < 16; i++)
-        for (let j = i + 1; j < 16; j++)
-          if (cells[j] && cells[i] && cells[i] > cells[j])
-            invCount++;
-
-      return invCount % 2 === 0;
-    },
     moveCell(cellIndex) {
       const emptyIndex = this.cells.indexOf(0);
 
@@ -59,6 +49,7 @@ export default {
       if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
         this.cells[emptyIndex] = this.cells[cellIndex];
         this.cells[cellIndex] = 0;
+        this.moves++; // added
       }
 
       if (this.isSolved()) {
@@ -82,14 +73,5 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-}
-
-.cell {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-  text-align: center;
-  background-color: #ffeb95;
-  color: #3f1f4b;
 }
 </style>

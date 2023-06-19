@@ -41,6 +41,7 @@ export default {
 
 .empty {
   background-color: #3f1f4b;
-  cursor: pointer;
+  cursor: not-allowed;
+  color: transparent;
 }
 </style>
