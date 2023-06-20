@@ -9,16 +9,18 @@
           :index="index"
           @move="moveCell"
       />
+      <ResultDialog v-if="gameOver" :moves="moves" @results="handleResults" />
     </div>
   </div>
 </template>
 
 <script>
 import Cell from "@/components/Cell.vue";
+import ResultDialog from "@/components/ResultDialog.vue";
 
 export default {
   name: 'GameBoard',
-  components: {Cell},
+  components: {ResultDialog, Cell},
   data() {
     return {
       cells: this.shuffleCells(),
@@ -67,6 +69,15 @@ export default {
         }
       }
       return this.cells[15] === 0;
+    },
+    handleResults(results) {
+      this.$emit('results', results);
+      this.resetGame();
+    },
+    resetGame() {
+      this.cells = this.shuffleCells();
+      this.moves = 0;
+      this.gameOver = false;
     }
   }
 }
